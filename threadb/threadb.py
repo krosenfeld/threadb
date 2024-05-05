@@ -1,9 +1,8 @@
 import sqlite3
-from datetime import datetime
 from openai import OpenAI
 
-class ThreadDB:
-    def __init__(self, db_name='../output/threads.db'):
+class Threadb:
+    def __init__(self, db_name='threads.db'):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self._create_table()
@@ -54,8 +53,23 @@ class ThreadDB:
         response = OpenAI().beta.threads.delete(thread_id)
         print(response)
 
+    def delete_all_threads(self):
+        """
+        Delete all existing threads from the database.
+        """
+        threads = self.get_all_threads()
+        for thread in threads:
+            thread_id = thread[1]
+            self.remove_thread_by_id(thread_id)
+
     def close(self):
         """
         Close the database connection.
         """
         self.conn.close()
+
+    def __del__(self):
+        """
+        Destructor method that is called when Threadb object is deleted.
+        """
+        self.close()
